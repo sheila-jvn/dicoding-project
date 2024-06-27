@@ -1,12 +1,18 @@
 import { Button } from "@/components/ui/button"
-import { createLazyFileRoute } from "@tanstack/react-router"
+import { getOtps } from "@/services/otp"
+import { createFileRoute } from "@tanstack/react-router"
 import { UploadCloud } from "lucide-react"
 
-export const Route = createLazyFileRoute("/")({
+export const Route = createFileRoute("/")({
   component: Index,
+  loader: () => getOtps(),
 })
 
 function Index() {
+  const data = Route.useLoaderData()
+
+  console.log({ data })
+
   return (
     <div className="flex flex-col items-center gap-4">
       <div className="flex w-[450px] flex-col items-center gap-2 rounded-[10px] border border-[#3f3f46] p-6">
