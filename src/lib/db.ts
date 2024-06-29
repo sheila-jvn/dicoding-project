@@ -25,14 +25,7 @@ interface Database {
 }
 
 export const db = {
-  init: async () => {
-    const { passkey } = auth
-    if (!passkey) throw new Error("You are not authenticated")
-
-    const encrypted = await encryptString(JSON.stringify({ otps: [] }), passkey)
-
-    return storage.setItem(RECORD_KEY, encrypted)
-  },
+  init: () => db.set({ otps: [] }),
 
   get: async () => {
     const records = await storage.getItem<string>(RECORD_KEY)
@@ -47,10 +40,12 @@ export const db = {
     return parsed
   },
 
-  /**
-   *  Write encrypted string to the database.
-   *  Use `@lib/crypto` for encryption/decryption
-   */
-  set: async (encryptedValue: string) =>
-    storage.setItem(RECORD_KEY, encryptedValue),
+  set: async (value: Database) => {
+    const { passkey } = auth
+    if (!passkey) throw new Error("You are not authenticated")
+
+    const encrypted = await encryptString(JSON.stringify(value), passkey)
+
+    return storage.setItem(RECORD_KEY, encrypted)
+  },
 }
