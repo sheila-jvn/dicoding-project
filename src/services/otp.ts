@@ -1,47 +1,14 @@
 import { auth } from "@/lib/auth"
-import { decryptString, encryptString } from "@/lib/crypto"
-import { db } from "@/lib/db"
-
-interface OtpRecord {
-  id: string
-  secret: string
-  label?: string
-  createdAt: number
-}
-
-interface Database {
-  otps: Array<OtpRecord>
-}
-
-export async function init() {
-  const { passkey } = auth
-  if (!passkey) throw new Error("You are not authenticated")
-
-  const encrypted = await encryptString(JSON.stringify({ otps: [] }), passkey)
-
-  return db.set(encrypted)
-}
-
-async function getAll() {
-  const records = await db.get()
-  const { passkey } = auth
-
-  if (!records) throw new Error("Database hasn't been initialized yet")
-  if (!passkey) throw new Error("You are not authenticated")
-
-  const decrypted = await decryptString(records, passkey)
-  const parsed = JSON.parse(decrypted) as Database
-
-  return parsed
-}
+import { encryptString } from "@/lib/crypto"
+import { OtpRecord, db } from "@/lib/db"
 
 export async function getOtps() {
-  const { otps } = await getAll()
+  const { otps } = await db.get()
   return otps
 }
 
 export async function addOtp(record: Omit<OtpRecord, "id" | "createdAt">) {
-  const data = await getAll()
+  const data = await db.get()
   const { passkey } = auth
 
   const id = crypto.randomUUID()
