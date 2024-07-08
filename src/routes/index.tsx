@@ -1,14 +1,20 @@
 import { OtpItem } from "@/components/OtpItem/"
 import { Button } from "@/components/ui/button"
-import { getOtps, init } from "@/services/otp"
-import { createFileRoute } from "@tanstack/react-router"
+import { getOtps } from "@/services/otp"
+import { createFileRoute, redirect } from "@tanstack/react-router"
 import { UploadCloud } from "lucide-react"
 
 export const Route = createFileRoute("/")({
   component: Index,
   loader: async () => {
-    await init()
     return getOtps()
+  },
+  beforeLoad: async () => {
+    try {
+      await getOtps()
+    } catch (error) {
+      throw redirect({ to: "/login" })
+    }
   },
 })
 
