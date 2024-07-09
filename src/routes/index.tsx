@@ -1,24 +1,14 @@
 import { OtpItem } from "@/components/OtpItem/"
 import { Button } from "@/components/ui/button"
-<<<<<<< HEAD
+import { OtpRecord } from "@/lib/db"
 import { getOtps } from "@/services/otp"
-import { createFileRoute, redirect } from "@tanstack/react-router"
-import { UploadCloud } from "lucide-react"
-=======
-import { OtpRecord, db } from "@/lib/db"
-import { getOtps } from "@/services/otp"
-import { Link, createFileRoute } from "@tanstack/react-router"
+import { Link, createFileRoute, redirect } from "@tanstack/react-router"
 import { LogOut, UploadCloud } from "lucide-react"
 import { useState } from "react"
->>>>>>> 9a11e65 (feat: Create add page)
 
 export const Route = createFileRoute("/")({
   component: Index,
   loader: async () => {
-<<<<<<< HEAD
-=======
-    await db.init()
->>>>>>> 9a11e65 (feat: Create add page)
     return getOtps()
   },
   beforeLoad: async () => {
