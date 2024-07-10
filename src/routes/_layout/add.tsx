@@ -4,7 +4,7 @@ import { getOtps } from "@/services/otp"
 import { Link, createFileRoute } from "@tanstack/react-router"
 import { ArrowLeft, Camera } from "lucide-react"
 
-export const Route = createFileRoute("/add")({
+export const Route = createFileRoute("/_layout/add")({
   component: Add,
   loader: async () => {
     await db.init()

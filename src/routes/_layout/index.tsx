@@ -1,12 +1,13 @@
 import { OtpItem } from "@/components/OtpItem/"
 import { Button } from "@/components/ui/button"
-import { OtpRecord } from "@/lib/db"
+import { auth } from "@/lib/auth"
+import { AuthError, DatabaseError, OtpRecord } from "@/lib/db"
 import { getOtps } from "@/services/otp"
 import { Link, createFileRoute, redirect } from "@tanstack/react-router"
 import { LogOut, UploadCloud } from "lucide-react"
 import { useState } from "react"
 
-export const Route = createFileRoute("/")({
+export const Route = createFileRoute("/_layout/")({
   component: Index,
   loader: async () => {
     return getOtps()
@@ -15,6 +16,10 @@ export const Route = createFileRoute("/")({
     try {
       await getOtps()
     } catch (error) {
+      if (error instanceof AuthError) throw redirect({ to: "/login" })
+      if (error instanceof DatabaseError) throw redirect({ to: "/setup" })
+
+      auth.password = undefined
       throw redirect({ to: "/login" })
     }
   },

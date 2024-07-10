@@ -11,45 +11,91 @@
 // Import Routes
 
 import { Route as rootRoute } from './routes/__root'
-import { Route as AddImport } from './routes/add'
-import { Route as IndexImport } from './routes/index'
+import { Route as LayoutImport } from './routes/_layout'
+import { Route as LayoutIndexImport } from './routes/_layout/index'
+import { Route as LayoutSetupImport } from './routes/_layout/setup'
+import { Route as LayoutLoginImport } from './routes/_layout/login'
+import { Route as LayoutAddImport } from './routes/_layout/add'
 
 // Create/Update Routes
 
-const AddRoute = AddImport.update({
-  path: '/add',
+const LayoutRoute = LayoutImport.update({
+  id: '/_layout',
   getParentRoute: () => rootRoute,
 } as any)
 
-const IndexRoute = IndexImport.update({
+const LayoutIndexRoute = LayoutIndexImport.update({
   path: '/',
-  getParentRoute: () => rootRoute,
+  getParentRoute: () => LayoutRoute,
+} as any)
+
+const LayoutSetupRoute = LayoutSetupImport.update({
+  path: '/setup',
+  getParentRoute: () => LayoutRoute,
+} as any)
+
+const LayoutLoginRoute = LayoutLoginImport.update({
+  path: '/login',
+  getParentRoute: () => LayoutRoute,
+} as any)
+
+const LayoutAddRoute = LayoutAddImport.update({
+  path: '/add',
+  getParentRoute: () => LayoutRoute,
 } as any)
 
 // Populate the FileRoutesByPath interface
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
-    '/': {
-      id: '/'
-      path: '/'
-      fullPath: '/'
-      preLoaderRoute: typeof IndexImport
+    '/_layout': {
+      id: '/_layout'
+      path: ''
+      fullPath: ''
+      preLoaderRoute: typeof LayoutImport
       parentRoute: typeof rootRoute
     }
-    '/add': {
-      id: '/add'
+    '/_layout/add': {
+      id: '/_layout/add'
       path: '/add'
       fullPath: '/add'
-      preLoaderRoute: typeof AddImport
-      parentRoute: typeof rootRoute
+      preLoaderRoute: typeof LayoutAddImport
+      parentRoute: typeof LayoutImport
+    }
+    '/_layout/login': {
+      id: '/_layout/login'
+      path: '/login'
+      fullPath: '/login'
+      preLoaderRoute: typeof LayoutLoginImport
+      parentRoute: typeof LayoutImport
+    }
+    '/_layout/setup': {
+      id: '/_layout/setup'
+      path: '/setup'
+      fullPath: '/setup'
+      preLoaderRoute: typeof LayoutSetupImport
+      parentRoute: typeof LayoutImport
+    }
+    '/_layout/': {
+      id: '/_layout/'
+      path: '/'
+      fullPath: '/'
+      preLoaderRoute: typeof LayoutIndexImport
+      parentRoute: typeof LayoutImport
     }
   }
 }
 
 // Create and export the route tree
 
-export const routeTree = rootRoute.addChildren({ IndexRoute, AddRoute })
+export const routeTree = rootRoute.addChildren({
+  LayoutRoute: LayoutRoute.addChildren({
+    LayoutAddRoute,
+    LayoutLoginRoute,
+    LayoutSetupRoute,
+    LayoutIndexRoute,
+  }),
+})
 
 /* prettier-ignore-end */
 
@@ -59,15 +105,33 @@ export const routeTree = rootRoute.addChildren({ IndexRoute, AddRoute })
     "__root__": {
       "filePath": "__root.tsx",
       "children": [
-        "/",
-        "/add"
+        "/_layout"
       ]
     },
-    "/": {
-      "filePath": "index.tsx"
+    "/_layout": {
+      "filePath": "_layout.tsx",
+      "children": [
+        "/_layout/add",
+        "/_layout/login",
+        "/_layout/setup",
+        "/_layout/"
+      ]
     },
-    "/add": {
-      "filePath": "add.tsx"
+    "/_layout/add": {
+      "filePath": "_layout/add.tsx",
+      "parent": "/_layout"
+    },
+    "/_layout/login": {
+      "filePath": "_layout/login.tsx",
+      "parent": "/_layout"
+    },
+    "/_layout/setup": {
+      "filePath": "_layout/setup.tsx",
+      "parent": "/_layout"
+    },
+    "/_layout/": {
+      "filePath": "_layout/index.tsx",
+      "parent": "/_layout"
     }
   }
 }
