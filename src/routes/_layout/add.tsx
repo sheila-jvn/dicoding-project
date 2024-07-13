@@ -1,8 +1,12 @@
 import { Button } from "@/components/ui/button"
+import { Input } from "@/components/ui/input"
+import { Label } from "@/components/ui/label"
 import { db } from "@/lib/db"
 import { getOtps } from "@/services/otp"
+import { addOtp } from "@/services/otp"
 import { Link, createFileRoute } from "@tanstack/react-router"
 import { ArrowLeft, Camera } from "lucide-react"
+import { useState } from "react"
 
 export const Route = createFileRoute("/_layout/add")({
   component: Add,
@@ -14,8 +18,25 @@ export const Route = createFileRoute("/_layout/add")({
 
 function Add() {
   const data = Route.useLoaderData()
+  const [label, setLabel] = useState("")
+  const [secret, setSecret] = useState("")
+  const [message, setMessage] = useState("")
 
-  console.log({ data })
+  const handleSave = async () => {
+    if (label && secret) {
+      try {
+        const newOtp = await addOtp({ label, secret })
+        setMessage(`OTP added with ID: ${newOtp.id}`)
+        // Reset form fields
+        setLabel("")
+        setSecret("")
+      } catch (error) {
+        setMessage("Failed to add OTP")
+      }
+    } else {
+      setMessage("Both label and secret are required")
+    }
+  }
 
   return (
     <>
@@ -53,13 +74,33 @@ function Add() {
             service.
           </p>
         </div>
-        <div className="flex w-full gap-4">
-          <input
-            className="w-full rounded-md border-[1px] border-[#3f3f46] bg-transparent p-2"
-            placeholder="Secret Key"
-          ></input>
-          <Button>Save</Button>
+        <div className="grid w-full gap-2">
+          <div className="grid gap-1.5">
+            <Label htmlFor="label">Label</Label>
+            <Input
+              type="text"
+              id="label"
+              value={label}
+              onChange={(e) => setLabel(e.target.value)}
+              placeholder="Enter a label"
+            />
+          </div>
+          <div className="grid gap-1.5">
+            <Label htmlFor="secret">Secret Key</Label>
+            <Input
+              type="text"
+              id="secret"
+              value={secret}
+              onChange={(e) => setSecret(e.target.value)}
+              placeholder="Enter a secret key"
+            />
+          </div>
         </div>
+
+        <Button className="w-full" onClick={handleSave}>
+          Save
+        </Button>
+        {message && <p>{message}</p>}
       </div>
     </>
   )
