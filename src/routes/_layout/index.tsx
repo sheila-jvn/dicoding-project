@@ -63,7 +63,7 @@ function Index() {
   console.log({ data })
 
   return (
-    <div className="mx-auto mt-4 flex w-[448px] flex-col items-center gap-4">
+    <>
       {!isSynced ?
         <div className="flex w-full flex-col items-center gap-2 rounded-[10px] border border-[#3f3f46] p-6">
           <Button onClick={handleSync}>
@@ -94,6 +94,6 @@ function Index() {
           <OtpItem key={otp.id} {...otp} />
         ))}
       </div>
-    </div>
+    </>
   )
 }

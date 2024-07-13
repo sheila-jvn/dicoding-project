@@ -6,7 +6,7 @@ export const Route = createFileRoute("/_layout")({
 
 function Layout() {
   return (
-    <div className="mx-auto max-w-md px-6 py-16">
+    <div className="mx-auto grid max-w-md gap-6 px-6 py-16">
       <Outlet />
     </div>
   )

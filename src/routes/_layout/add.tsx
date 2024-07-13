@@ -18,10 +18,15 @@ function Add() {
   console.log({ data })
 
   return (
-    <div className="mx-auto mt-4 flex w-[448px] flex-col items-center gap-4">
+    <>
       <div className="flex w-full items-center gap-4 rounded-[10px] border border-[#3f3f46] p-6">
-        <Button asChild className="border-[1px] border-[#3f3f46] bg-transparent text-white hover:text-black">
-          <Link to="/"><ArrowLeft /></Link>
+        <Button
+          asChild
+          className="border-[1px] border-[#3f3f46] bg-transparent text-white hover:text-black"
+        >
+          <Link to="/">
+            <ArrowLeft />
+          </Link>
         </Button>
         <p className="text-xl font-semibold">Add a new 2FA</p>
       </div>
@@ -48,11 +53,14 @@ function Add() {
             service.
           </p>
         </div>
-        <div className="flex gap-4 w-full">
-          <input className="w-full bg-transparent rounded-md border-[1px] border-[#3f3f46] p-2" placeholder="Secret Key"></input>
+        <div className="flex w-full gap-4">
+          <input
+            className="w-full rounded-md border-[1px] border-[#3f3f46] bg-transparent p-2"
+            placeholder="Secret Key"
+          ></input>
           <Button>Save</Button>
         </div>
       </div>
-    </div>
+    </>
   )
 }
