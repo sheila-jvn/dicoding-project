@@ -18,6 +18,7 @@ export const Route = createFileRoute("/_layout/")({
     } catch (error) {
       if (error instanceof AuthError) throw redirect({ to: "/login" })
       if (error instanceof DatabaseError) throw redirect({ to: "/setup" })
+      // if (error instanceof OperationError) throw redirect({ to: "/setup" })
 
       auth.password = undefined
       throw redirect({ to: "/login" })

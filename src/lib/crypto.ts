@@ -5,7 +5,7 @@ async function generateKeyFromPasskey(
   passkey: string,
   salt: Uint8Array,
 ): Promise<CryptoKey> {
-  const keyMaterial = await window.crypto.subtle.importKey(
+  const keyMaterial = await globalThis.crypto.subtle.importKey(
     "raw",
     encoder.encode(passkey),
     { name: "PBKDF2" },
@@ -13,7 +13,7 @@ async function generateKeyFromPasskey(
     ["deriveKey"],
   )
 
-  return await window.crypto.subtle.deriveKey(
+  return await globalThis.crypto.subtle.deriveKey(
     {
       name: "PBKDF2",
       salt: salt,
@@ -31,12 +31,12 @@ export async function encryptString(
   plainText: string,
   passkey: string,
 ): Promise<string> {
-  const salt = window.crypto.getRandomValues(new Uint8Array(16))
-  const iv = window.crypto.getRandomValues(new Uint8Array(12))
+  const salt = globalThis.crypto.getRandomValues(new Uint8Array(16))
+  const iv = globalThis.crypto.getRandomValues(new Uint8Array(12))
 
   const key = await generateKeyFromPasskey(passkey, salt)
 
-  const encrypted = await window.crypto.subtle.encrypt(
+  const encrypted = await globalThis.crypto.subtle.encrypt(
     {
       name: "AES-GCM",
       iv: iv,
@@ -71,7 +71,7 @@ export async function decryptString(
 
   const key = await generateKeyFromPasskey(passkey, salt)
 
-  const decrypted = await window.crypto.subtle.decrypt(
+  const decrypted = await globalThis.crypto.subtle.decrypt(
     {
       name: "AES-GCM",
       iv: iv,
@@ -82,3 +82,13 @@ export async function decryptString(
 
   return decoder.decode(decrypted)
 }
+
+const passkey = "your-secure-passkey"
+
+const rawString = "some string"
+
+const encrypted = await encryptString(rawString, passkey)
+const decrypted = await decryptString(encrypted, passkey)
+
+console.log({ encrypted, decrypted })
+console.log(await decryptString(encrypted, "wrong-passkey"))
