@@ -1,7 +1,7 @@
 import { auth } from "@/lib/auth"
 import { decryptString, encryptString } from "@/lib/crypto"
 import localforage from "localforage"
-import { AuthError, DatabaseError } from "./error"
+import { AUTH_ERROR_CODE, AuthError, DatabaseError } from "./error"
 
 const RECORD_KEY = "records"
 const KEY_STORE = "otps"
@@ -35,7 +35,10 @@ export const db = {
 
     if (!records)
       throw new DatabaseError("Database hasn't been initialized yet")
-    if (!password) throw new AuthError("You are not authenticated")
+    if (!password)
+      throw new AuthError("You are not authenticated", {
+        code: AUTH_ERROR_CODE.NOT_AUTHENTICATED,
+      })
 
     const decrypted = await decryptString(records, password)
     const parsed = JSON.parse(decrypted) as Database
@@ -45,7 +48,10 @@ export const db = {
 
   set: async (value: Database) => {
     const { password } = auth
-    if (!password) throw new AuthError("You are not authenticated")
+    if (!password)
+      throw new AuthError("You are not authenticated", {
+        code: AUTH_ERROR_CODE.NOT_AUTHENTICATED,
+      })
 
     const encrypted = await encryptString(JSON.stringify(value), password)
 

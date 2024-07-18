@@ -25,7 +25,7 @@ if (!rootElement.innerHTML) {
   root.render(
     <StrictMode>
       <RouterProvider router={router} />
-      <Toaster />
+      <Toaster richColors />
     </StrictMode>,
   )
 }

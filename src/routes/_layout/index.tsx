@@ -1,11 +1,12 @@
 import { OtpItem } from "@/components/OtpItem/"
 import { Button } from "@/components/ui/button"
 import { auth } from "@/lib/auth"
-import { AuthError, DatabaseError, OtpRecord } from "@/lib/db"
+import { AuthError, DatabaseError } from "@/lib/db"
 import { getOtps } from "@/services/otp"
 import { Link, createFileRoute, redirect } from "@tanstack/react-router"
 import { LogOut, UploadCloud } from "lucide-react"
 import { useState } from "react"
+import { toast } from "sonner"
 
 export const Route = createFileRoute("/_layout/")({
   component: Index,
@@ -16,42 +17,18 @@ export const Route = createFileRoute("/_layout/")({
     try {
       await getOtps()
     } catch (error) {
-      if (error instanceof AuthError) throw redirect({ to: "/login" })
-      if (error instanceof DatabaseError) throw redirect({ to: "/setup" })
-      // if (error instanceof OperationError) throw redirect({ to: "/setup" })
-
       auth.password = undefined
+      toast.error((error as Error).message)
+
+      if (error instanceof AuthError)
+        throw redirect({ to: "/login", replace: true })
+      if (error instanceof DatabaseError)
+        throw redirect({ to: "/setup", replace: true })
+
       throw redirect({ to: "/login" })
     }
   },
 })
-
-const dataOtps: Array<OtpRecord> = [
-  {
-    id: "1",
-    secret: "I65VU7K5ZQL7WB4E",
-    label: "ZbPqz@example.com",
-    createdAt: 30,
-  },
-  {
-    id: "2",
-    secret: "I65VU7K5ZQL7WB4E",
-    label: "jhdfbchea@example.com",
-    createdAt: 30,
-  },
-  {
-    id: "3",
-    secret: "I65VU7K5ZQL7WB4E",
-    label: "asdwWD@example.com",
-    createdAt: 30,
-  },
-  {
-    id: "4",
-    secret: "I65VU7K5ZQL7WB4E",
-    label: "wdwqd@example.com",
-    createdAt: 30,
-  },
-]
 
 function Index() {
   const data = Route.useLoaderData()
@@ -61,12 +38,10 @@ function Index() {
     setIsSynced(true)
   }
 
-  console.log({ data })
-
   return (
     <>
       {!isSynced ?
-        <div className="flex w-full flex-col items-center gap-2 rounded-[10px] border border-[#3f3f46] p-6">
+        <div className="flex w-full flex-col items-center gap-2 rounded-lg border border-border p-6">
           <Button onClick={handleSync}>
             Sync w/ Google Drive <UploadCloud className="ml-2 h-4 w-4" />
           </Button>
@@ -91,7 +66,7 @@ function Index() {
         <Button asChild className="w-full">
           <Link to="/add">Add 2FA</Link>
         </Button>
-        {dataOtps.map((otp) => (
+        {data.map((otp) => (
           <OtpItem key={otp.id} {...otp} />
         ))}
       </div>

@@ -3,8 +3,8 @@ import { Input } from "@/components/ui/input"
 import { auth } from "@/lib/auth"
 import { db } from "@/lib/db"
 import { zodResolver } from "@hookform/resolvers/zod"
-import { createFileRoute, redirect } from "@tanstack/react-router"
-import { useForm } from "react-hook-form"
+import { createFileRoute, redirect, useRouter } from "@tanstack/react-router"
+import { Controller, useForm } from "react-hook-form"
 import { z } from "zod"
 
 export const Route = createFileRoute("/_layout/login")({
@@ -24,6 +24,7 @@ const schema = z.object({
 type FormData = z.infer<typeof schema>
 
 function Login() {
+  const router = useRouter()
   const form = useForm<FormData>({
     resolver: zodResolver(schema),
     defaultValues: {
@@ -31,11 +32,11 @@ function Login() {
     },
   })
 
-  const onSubmit = async (data: FormData) => {
+  const onSubmit = (data: FormData) => {
     const { password } = data
     auth.password = password
 
-    await redirect({ to: "/" })
+    return router.navigate({ to: "/" })
   }
 
   return (
@@ -48,9 +49,19 @@ function Login() {
         </p>
       </div>
 
-      <form onSubmit={form.handleSubmit(authenticate)} className="grid gap-2">
+      <form onSubmit={form.handleSubmit(onSubmit)} className="grid gap-2">
         <div className="flex w-full max-w-sm items-center space-x-2">
-          <Input type="password" placeholder="Enter your password" />
+          <Controller
+            name="password"
+            control={form.control}
+            render={({ field }) => (
+              <Input
+                {...field}
+                type="password"
+                placeholder="Enter your password"
+              />
+            )}
+          />
           <Button type="submit">Sign In</Button>
         </div>
       </form>

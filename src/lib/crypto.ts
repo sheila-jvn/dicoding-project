@@ -1,3 +1,5 @@
+import { AUTH_ERROR_CODE, AuthError } from "./db"
+
 const encoder = new TextEncoder()
 const decoder = new TextDecoder()
 
@@ -71,24 +73,20 @@ export async function decryptString(
 
   const key = await generateKeyFromPasskey(passkey, salt)
 
-  const decrypted = await globalThis.crypto.subtle.decrypt(
-    {
-      name: "AES-GCM",
-      iv: iv,
-    },
-    key,
-    cipherText,
-  )
+  try {
+    const decrypted = await globalThis.crypto.subtle.decrypt(
+      {
+        name: "AES-GCM",
+        iv: iv,
+      },
+      key,
+      cipherText,
+    )
 
-  return decoder.decode(decrypted)
+    return decoder.decode(decrypted)
+  } catch (error) {
+    throw new AuthError("Invalid password", {
+      code: AUTH_ERROR_CODE.INVALID_PASSWORD,
+    })
+  }
 }
-
-const passkey = "your-secure-passkey"
-
-const rawString = "some string"
-
-const encrypted = await encryptString(rawString, passkey)
-const decrypted = await decryptString(encrypted, passkey)
-
-console.log({ encrypted, decrypted })
-console.log(await decryptString(encrypted, "wrong-passkey"))
