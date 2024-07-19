@@ -36,7 +36,7 @@ export function OtpItem(props: OtpRecord) {
   }, [])
 
   return (
-    <div className="flex w-full items-center justify-between gap-4 rounded-[10px] border border-[#3f3f46] p-6">
+    <div className="flex w-full items-center justify-between gap-4 rounded-lg border border-border p-6">
       <div className="flex flex-col gap-2">
         <p className="text-sm font-normal text-[#a1a1aa]">{props.label}</p>
         <p className="text-2xl font-semibold">{token}</p>

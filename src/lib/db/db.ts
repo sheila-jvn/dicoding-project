@@ -29,6 +29,9 @@ export const db = {
   init: () => db.set({ otps: [] }),
   exists: async () => Boolean(await storage.getItem(RECORD_KEY)),
 
+  getRaw: () => storage.getItem<string>(RECORD_KEY),
+  setRaw: (value: string) => storage.setItem(RECORD_KEY, value),
+
   get: async () => {
     const records = await storage.getItem<string>(RECORD_KEY)
     const { password } = auth
